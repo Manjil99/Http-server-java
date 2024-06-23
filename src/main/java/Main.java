@@ -29,6 +29,8 @@ public class Main {
            String responceString = HttpRequest[1].substring(6);
            output.write(("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + responceString.length()
                    + "\r\n\r\n" + responceString).getBytes());
+       } else if(HttpRequest[1].equals("/")) {
+           output.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
        } else {
            output.write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
        }
