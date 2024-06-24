@@ -23,10 +23,13 @@ public class Main {
        InputStream input = clientSocket.getInputStream();
        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
        String line = reader.readLine();
+       reader.readLine();
+       String headerSecondLine = reader.readLine();
+       String[] headerSecondLineContents = headerSecondLine.split(" ");
        String[] HttpRequest = line.split(" ");
        OutputStream  output = clientSocket.getOutputStream();
-       if(HttpRequest[1].matches("/echo/(.*)")){
-           String responceString = HttpRequest[1].substring(6);
+       if(HttpRequest[1].equals("/user-agent")){
+           String responceString = headerSecondLineContents[1];
            output.write(("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + responceString.length()
                    + "\r\n\r\n" + responceString).getBytes());
        } else if(HttpRequest[1].equals("/")) {
