@@ -6,8 +6,10 @@ import java.util.concurrent.Executors;
 
 public class HttpServer {
     private final ExecutorService executorService;
-    public HttpServer(final int concurrencyLevel){
-        executorService = Executors.newFixedThreadPool(concurrencyLevel);
+    private String directory;
+    public HttpServer(final int concurrencyLevel,String directory){
+        this.executorService = Executors.newFixedThreadPool(concurrencyLevel);
+        this.directory = directory;
     }
     public void run() {
 
@@ -54,7 +56,19 @@ public class HttpServer {
 
         } else if (HttpRequest[1].equals("/")) {
             output.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
-        } else {
+        } else if(HttpRequest[1].matches("/files/(.*)")){
+            String fileName = HttpRequest[1].substring(7);
+            File file = new File(this.directory,fileName);
+            System.out.println(file.isFile());
+            if(file.exists()){
+                BufferedReader fileReader = new BufferedReader(new FileReader(file));
+                String content = fileReader.readLine();
+                output.write(("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + content.length()
+                        + "\r\n\r\n" + content).getBytes());
+            } else {
+                output.write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
+            }
+        }else {
             output.write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
         }
         clientSocket.close();
