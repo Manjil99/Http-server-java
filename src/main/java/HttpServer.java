@@ -63,7 +63,7 @@ public class HttpServer {
             if(file.exists()){
                 BufferedReader fileReader = new BufferedReader(new FileReader(file));
                 String content = fileReader.readLine();
-                output.write(("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + content.length()
+                output.write(("HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: " + content.length()
                         + "\r\n\r\n" + content).getBytes());
             } else {
                 output.write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
