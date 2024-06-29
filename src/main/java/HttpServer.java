@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -60,7 +61,8 @@ public class HttpServer {
 
         if (HttpRequest[1].matches("/echo/(.*)")) {
             String responseString = HttpRequest[1].substring(6);
-            if(requestHeaders.containsKey("Accept-Encoding") && requestHeaders.get("Accept-Encoding").equals("gzip")){
+            String[] acceptedEncodings = requestHeaders.get("Accept-Encoding").split("\\s*,\\s*");
+            if(Arrays.asList(acceptedEncodings).contains("gzip")){
                 output.write(("HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: text/plain\r\nContent-Length: "
                         + responseString.length()
                         + "\r\n\r\n" + responseString).getBytes());
