@@ -77,10 +77,11 @@ public class HttpServer {
                     char[] bodyChars = new char[Integer.parseInt(requestHeaders.get("Content-Length"))];
                     reader.read(bodyChars,0,Integer.parseInt(requestHeaders.get("Content-Length")));
                     String bodyData = new String(bodyChars);
+                    System.out.println(bodyData);
                     FileWriter fileWriter = new FileWriter(file);
                     fileWriter.write(bodyData);
                     fileWriter.close();
-                    output.write(("HTTP/1.1 201 Created\r\n").getBytes());
+                    output.write(("HTTP/1.1 201 Created\r\n\r\n").getBytes());
                 } else {
                     output.write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
                 }
