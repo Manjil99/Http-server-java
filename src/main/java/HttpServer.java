@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.zip.GZIPOutputStream;
 
 public class HttpServer {
     private final ExecutorService executorService;
@@ -63,9 +64,15 @@ public class HttpServer {
             String responseString = HttpRequest[1].substring(6);
             if(requestHeaders.containsKey("Accept-Encoding") &&
                     Arrays.asList(requestHeaders.get("Accept-Encoding").split("\\s*,\\s*")).contains("gzip")){
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                try(GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteArrayOutputStream)){
+                    gzipOutputStream.write(responseString.getBytes());
+                }
+                byte[] gzipData = byteArrayOutputStream.toByteArray();
                 output.write(("HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: text/plain\r\nContent-Length: "
-                        + responseString.length()
-                        + "\r\n\r\n" + responseString).getBytes());
+                        + gzipData.length
+                        + "\r\n\r\n").getBytes());
+                output.write(gzipData);
             } else {
                 output.write(("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + responseString.length()
                         + "\r\n\r\n" + responseString).getBytes());
