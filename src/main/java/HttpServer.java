@@ -61,8 +61,8 @@ public class HttpServer {
 
         if (HttpRequest[1].matches("/echo/(.*)")) {
             String responseString = HttpRequest[1].substring(6);
-            String[] acceptedEncodings = requestHeaders.get("Accept-Encoding").split("\\s*,\\s*");
-            if(Arrays.asList(acceptedEncodings).contains("gzip")){
+            if(requestHeaders.containsKey("Accepted-Encoding") &&
+                    Arrays.asList(requestHeaders.get("Accept-Encoding").split("\\s*,\\s*")).contains("gzip")){
                 output.write(("HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: text/plain\r\nContent-Length: "
                         + responseString.length()
                         + "\r\n\r\n" + responseString).getBytes());
