@@ -60,8 +60,14 @@ public class HttpServer {
 
         if (HttpRequest[1].matches("/echo/(.*)")) {
             String responseString = HttpRequest[1].substring(6);
-            output.write(("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + responseString.length()
-                    + "\r\n\r\n" + responseString).getBytes());
+            if(requestHeaders.containsKey("Accept-Encoding") && requestHeaders.get("Accept-Encoding").equals("gzip")){
+                output.write(("HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: text/plain\r\nContent-Length: "
+                        + responseString.length()
+                        + "\r\n\r\n" + responseString).getBytes());
+            } else {
+                output.write(("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + responseString.length()
+                        + "\r\n\r\n" + responseString).getBytes());
+            }
         } else if (HttpRequest[1].equals("/user-agent")) {
             String userAgent = requestHeaders.get("User-Agent");
             output.write(("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + userAgent.length()
@@ -77,7 +83,6 @@ public class HttpServer {
                     char[] bodyChars = new char[Integer.parseInt(requestHeaders.get("Content-Length"))];
                     reader.read(bodyChars,0,Integer.parseInt(requestHeaders.get("Content-Length")));
                     String bodyData = new String(bodyChars);
-                    System.out.println(bodyData);
                     FileWriter fileWriter = new FileWriter(file);
                     fileWriter.write(bodyData);
                     fileWriter.close();
